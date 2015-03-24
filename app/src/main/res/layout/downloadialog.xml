@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:gravity="center" android:id="@+id/framelayout" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_margin="15.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:id="@+id/filename_layout" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentLeft="true">
+        <TextView android:textAppearance="?android:textAppearanceMedium" android:id="@+id/textView1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Name:" />
+        <EditText android:id="@+id/filename_edittext" android:layout_width="fill_parent" android:layout_height="wrap_content" android:ems="10">
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
+    <LinearLayout android:orientation="vertical" android:id="@+id/fileway_layout" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="15.0dip" android:layout_below="@+id/filename_layout">
+        <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <TextView android:textAppearance="?android:textAppearanceMedium" android:id="@+id/fileway_textview" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="File Path:" android:layout_alignParentLeft="true" />
+            <ImageView android:id="@+id/file_path_imageview" android:layout_width="25.0dip" android:layout_height="25.0dip" android:layout_marginRight="15.0dip" android:src="@drawable/icon" android:layout_alignParentRight="true" />
+        </RelativeLayout>
+        <EditText android:id="@+id/fileway_edittext" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip" android:ems="10" />
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal" android:id="@+id/LinearLayout01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="15.0dip" android:layout_below="@+id/fileway_layout">
+        <Button android:layout_gravity="left" android:id="@+id/cancel" android:layout_width="fill_parent" android:layout_height="fill_parent" android:text="Cancel" android:layout_weight="0.5" />
+        <Button android:layout_gravity="right" android:id="@+id/confrim" android:layout_width="fill_parent" android:layout_height="fill_parent" android:text="Download" android:layout_weight="0.5" />
+    </LinearLayout>
+</RelativeLayout>
