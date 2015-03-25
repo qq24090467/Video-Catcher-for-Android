@@ -10,7 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
-
+import org.apache.commons.io.FilenameUtils;
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -44,13 +44,17 @@ public class FrameDetectorService extends WakefulIntentService {
 
     }
 
-    public void postFoundedVideo(final FoundedVideo video){
+    public void postFoundedVideo(FoundedVideo video){
       /*  Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
             public void run() {
-*/
-                MyApp.bus.post(video);
+*/      String link = video.getLink();
+        String basename = FilenameUtils.getBaseName(link);
+        String extension = FilenameUtils.getExtension(link);
+        String filename = basename+"."+extension;
+        video.setTitle(filename);
+        MyApp.bus.post(video);
                 Log.i("postedvideo",video.getLink());
   /*          }
         });
@@ -64,23 +68,39 @@ public class FrameDetectorService extends WakefulIntentService {
         for(Element el:elements){
            String link = el.attr("src");
            if(link.equals("")||link!=null){
-               try {
-                   URL u = new URL(link);
-                   String filename = URLDecoder.decode(u.getFile(), "UTF-8");
+               if(link.contains("http")||link.contains("https")){
+                   String basename = FilenameUtils.getBaseName(link);
+                   String extension = FilenameUtils.getExtension(link);
+                   String filename = basename+"."+extension;
                    videos.add(new FoundedVideo(link,filename));
-
-               } catch (MalformedURLException e) {
-                   e.printStackTrace();
-                   videos.add(new FoundedVideo(link,"video.mp4"));
-
-               } catch (UnsupportedEncodingException e) {
-
-                   videos.add(new FoundedVideo(link,"video.mp4"));
-                   e.printStackTrace();
                }
-
            }
         }
+        Elements tags = doc.getElementsByTag("video");
+        for(Element el:tags){
+            String link = el.attr("src");
+            if(link.equals("")||link!=null){
+                if(link.contains("http")||link.contains("https")) {
+                    String basename = FilenameUtils.getBaseName(link);
+                    String extension = FilenameUtils.getExtension(link);
+                    String filename = basename + "." + extension;
+                    videos.add(new FoundedVideo(link, filename));
+                }
+            }
+        }
+        Elements mailruvids = doc.getElementsByAttributeValueContaining("data-src","mail.ru");
+        for(Element el:mailruvids){
+            String link = el.attr("data-src");
+            if(link.equals("")||link!=null){
+                if(link.contains("http")||link.contains("https")) {
+                    String basename = FilenameUtils.getBaseName(link);
+                    String extension = FilenameUtils.getExtension(link);
+                    String filename = basename + "." + extension;
+                    videos.add(new FoundedVideo(link, filename));
+                }
+            }
+        }
+
         return videos;
     }
 
@@ -93,6 +113,7 @@ public class FrameDetectorService extends WakefulIntentService {
 
 
         ArrayList<FoundedVideo> videos = html5VideoFounder(html,url);
+        Log.i(LOG,"Found html5 "+videos.size());
         for(final FoundedVideo video:videos){
               Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
@@ -129,7 +150,7 @@ public class FrameDetectorService extends WakefulIntentService {
                         String html = Jsoup.connect(params[0]).userAgent("Mozilla/5.0 (Linux; Android 4.4.2; Nexus 5 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.99 Mobile Safari/537.36").get().toString();
                         return html;
                     } catch (Exception e) {
-                        e.printStackTrace();
+                       // e.printStackTrace();
                         return "null";
                     }
 

@@ -38,8 +38,8 @@ public class DownloadAdapter extends BaseAdapter {
     }
 
     public void refresh(){
-      /*videos.clear();
-      notifyDataSetChanged();*/
+      videos.clear();
+      notifyDataSetChanged();
     }
     @Override
     public int getCount() {
@@ -77,6 +77,7 @@ public class DownloadAdapter extends BaseAdapter {
 
         holder.name.setText(videos.get(position).getTitle());
 
+        convertView.setBackgroundResource(R.drawable.download_icon);
         return convertView;
 
     }

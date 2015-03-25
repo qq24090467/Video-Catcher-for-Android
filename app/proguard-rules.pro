@@ -20,3 +20,4 @@
     @com.squareup.otto.Subscribe public *;
     @com.squareup.otto.Produce public *;
 }
+-keepclassmembers class name.cpr.VideoEnabledWebView$JavascriptInterface { public *; }

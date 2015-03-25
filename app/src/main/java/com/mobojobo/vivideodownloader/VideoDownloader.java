@@ -47,6 +47,7 @@ public class VideoDownloader extends Activity implements OnClickListener{
 		file_name = i.getStringExtra("filename");
 		downloadlink = i.getStringExtra("downloadlink");
 
+        file_name = file_name.replaceAll("(\\p{Punct})","");
 
 		final EditText filename = (EditText) findViewById(R.id.filename_edittext);
 		final EditText filepath= (EditText) findViewById(R.id.fileway_edittext);
@@ -56,7 +57,7 @@ public class VideoDownloader extends Activity implements OnClickListener{
 		
 		
 		filename.setText(file_name);
-		filepath.setText(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)+File.separator);
+		filepath.setText(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+File.separator);
 
 		
 		 File mPath = new File(Environment.getExternalStorageDirectory()+"");

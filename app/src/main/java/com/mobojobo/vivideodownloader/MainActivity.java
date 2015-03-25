@@ -19,12 +19,16 @@ import android.view.ViewGroup;
 import android.os.Build;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.IconTextView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,15 +39,18 @@ import com.mobojobo.vivideodownloader.adapters.DownloadAdapter;
 import com.mobojobo.vivideodownloader.models.FoundedVideo;
 import com.squareup.otto.Subscribe;
 
+import java.lang.reflect.Field;
+
 
 public class MainActivity extends ActionBarActivity {
     static WebView webview;
-    static IconTextView home;//,down;
+    static IconTextView home,refresh;//,down;
     static EditText url_edittext;
     static TextView count_text;
     static LinearLayout next_back_layout;
     static ListView videoslistView;
     static DownloadAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +63,8 @@ public class MainActivity extends ActionBarActivity {
         View urltab_view = getSupportActionBar().getCustomView();
         url_edittext = (EditText) urltab_view.findViewById(R.id.filename_edittext);
         home = (IconTextView) urltab_view.findViewById(R.id.home_button);
+        refresh = (IconTextView) urltab_view.findViewById(R.id. reload_button);
+
         count_text = (TextView)  urltab_view.findViewById(R.id.video_count);
         next_back_layout= (LinearLayout) urltab_view.findViewById(R.id.next_back_layout);
         Drawable background =  new IconDrawable(this, Iconify.IconValue.fa_download)
@@ -69,6 +78,14 @@ public class MainActivity extends ActionBarActivity {
                 onClickDownload();
             }
         });
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                refresh();
+
+            }
+        });
         count_text.setText("0");
 
 
@@ -77,7 +94,6 @@ public class MainActivity extends ActionBarActivity {
         videoslistView = (ListView) findViewById(R.id.videoslist);
         videoslistView.setVisibility(View.INVISIBLE);
         adapter = new DownloadAdapter(this);
-
         videoslistView.setAdapter(adapter);
         videoslistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -153,6 +169,11 @@ public class MainActivity extends ActionBarActivity {
     public void onBackPressed() {
         super.onBackPressed();
         back();
+    }
+
+    public static void refresh(){
+        String url = webview.getUrl();
+        webview.loadUrl(url);
     }
 
     public void onClickDownload(){
@@ -244,25 +265,40 @@ public class MainActivity extends ActionBarActivity {
 
             webview.getSettings().setJavaScriptEnabled(true);
             webview.addJavascriptInterface(new MyJavaScriptInterface(getActivity().getBaseContext()), "HtmlViewer");
+
             webview.setWebViewClient(new WebViewClient(){
+
+
                 @Override
                 public void onPageStarted(WebView view, String url, Bitmap favicon) {
                     super.onPageStarted(view, url, favicon);
                     resetVideoCount();
+                    url_edittext.setText(url);
+
 
                 }
+
+                @Override
+                public void onLoadResource(WebView view, String url) {
+                    super.onLoadResource(view, url);
+                    Log.i("resource",url);
+                }
+
 
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
                     webview.loadUrl("javascript:window.HtmlViewer.showHTML" +
                                 "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
+
+                    Log.i("finish",url);
+
                 }
             });
 
-            webview.setWebChromeClient(new WebChromeClient(){
+            webview.setWebChromeClient(new WebChromeClient());
 
-            });
+
             webview.loadUrl(lastlink);
 
 
@@ -290,7 +326,7 @@ public class MainActivity extends ActionBarActivity {
                     }
                 }.run();
 
-                Log.i("html",html);
+               // Log.i("html",html);
 
             }
 
