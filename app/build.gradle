@@ -13,7 +13,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -34,4 +34,5 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.5'
     compile 'com.commonsware.cwac:wakeful:1.0.+'
     compile 'commons-io:commons-io:2.4'
+
 }

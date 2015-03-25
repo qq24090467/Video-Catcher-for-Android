@@ -20,4 +20,15 @@
     @com.squareup.otto.Subscribe public *;
     @com.squareup.otto.Produce public *;
 }
--keepclassmembers class name.cpr.VideoEnabledWebView$JavascriptInterface { public *; }
+
+-keep public class org.jsoup.** {
+public *;
+}
+
+-keep class com.loopj.android.** { *; }
+
+-keep interface com.loopj.android.** { *; }
+
+-keep class com.joanzapata.** { *; }
+
+-keep class android.view.** { *; }

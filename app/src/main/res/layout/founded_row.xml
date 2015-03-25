@@ -3,21 +3,38 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
      >
 
-
         <TextView
-
             android:id="@+id/video_found"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:gravity="left|center"
-            android:text="Video Found !"
+            android:text="asdfhagskdhfgajskdgfjashgdfjkagskjdfgakjsdfjahsgdkfjhasgdkjhfgaksdgfksadfkjsgadfasfdVideo Found !"
             android:textAppearance="?android:textAppearanceMedium"
-            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:layout_margin="5dp"
-            />
+            android:layout_margin="3dp"
+            android:layout_toLeftOf="@+id/button"
+            android:layout_toStartOf="@+id/button" />
+
+    <IconTextView
+        android:layout_width="35.0dip"
+        android:layout_height="35.0dip"
+        android:text="{fa-cloud-download}"
+        android:shadowColor="@color/shadow_color"
+        android:shadowDx="3"
+        android:id="@+id/button"
+        android:shadowDy="3"
+        android:shadowRadius="1"
+        android:textSize="35sp"
+        android:textColor="@android:color/holo_green_light"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="5dp"
+        />
+
 
 </RelativeLayout>

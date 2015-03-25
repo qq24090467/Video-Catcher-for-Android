@@ -3,8 +3,12 @@ package com.mobojobo.vivideodownloader;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -31,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.joanzapata.android.iconify.IconDrawable;
@@ -50,13 +55,15 @@ public class MainActivity extends ActionBarActivity {
     static LinearLayout next_back_layout;
     static ListView videoslistView;
     static DownloadAdapter adapter;
-
+    private boolean doubleBackToExitPressedOnce=false;
+    static SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         MyApp.bus.register(this);
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setCustomView(R.layout.url_toolbar);
@@ -166,9 +173,34 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        adapter.refresh();
+    }
+
+    @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        back();
+        if(webview!=null)
+            if(webview.canGoBack()){
+                webview.goBack();
+            }else{
+
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed();
+                    return;
+                }
+
+                this.doubleBackToExitPressedOnce = true;
+                Toast.makeText(this,"Press back once more to exit.",Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        doubleBackToExitPressedOnce=false;
+                    }
+                }, 2000);
+
+            }
     }
 
     public static void refresh(){
@@ -226,6 +258,7 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -250,16 +283,17 @@ public class MainActivity extends ActionBarActivity {
         }
 
 
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             webview = (WebView) rootView.findViewById(R.id.webView1);
             String lastlink;
-            if(!getActivity().getSharedPreferences("webview", Context.MODE_PRIVATE).contains("last")){
+            if(!sharedPreferences.contains("last")){
                 lastlink="http://www.google.com";
             }else{
-                lastlink =getActivity().getSharedPreferences("webview", Context.MODE_PRIVATE).getString("last",url_edittext.getText().toString());
+                lastlink =sharedPreferences.getString("last", url_edittext.getText().toString());
 
             }
 
@@ -290,8 +324,8 @@ public class MainActivity extends ActionBarActivity {
                     super.onPageFinished(view, url);
                     webview.loadUrl("javascript:window.HtmlViewer.showHTML" +
                                 "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
-
                     Log.i("finish",url);
+                    sharedPreferences.edit().putString("last",url).commit();
 
                 }
             });
@@ -304,6 +338,8 @@ public class MainActivity extends ActionBarActivity {
 
             return rootView;
         }
+
+
 
         class MyJavaScriptInterface {
 

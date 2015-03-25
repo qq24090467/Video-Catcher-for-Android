@@ -32,5 +32,5 @@
         android:text=""
         android:id="@+id/textView"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="150dp"/>
+        android:layout_marginLeft="50dp"/>
 </RelativeLayout>
