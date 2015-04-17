@@ -16,7 +16,7 @@
             android:layout_width="35.0dip"
             android:layout_height="35.0dip"
             android:src="@drawable/home" />-->
-        <IconTextView
+        <android.widget.IconTextView
             android:layout_width="35.0dip"
             android:layout_height="35.0dip"
             android:text="{fa-home}"
@@ -31,7 +31,7 @@
 
 
 
-        <IconTextView
+        <android.widget.IconTextView
             android:layout_width="35.0dip"
             android:layout_height="35.0dip"
             android:text="{fa-refresh}"

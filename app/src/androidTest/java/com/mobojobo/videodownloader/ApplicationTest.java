@@ -1,4 +1,4 @@
-package com.mobojobo.vivideodownloader;
+package com.mobojobo.videodownloader;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

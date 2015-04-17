@@ -1,4 +1,4 @@
-package com.mobojobo.vivideodownloader;
+package com.mobojobo.videodownloader;
 
 import java.io.File;
 
@@ -17,10 +17,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.mobojobo.vivideodownloader.utils.FileDialog;
+import com.mobojobo.videodownloader.utils.FileDialog;
 
 
 public class VideoDownloader extends Activity implements OnClickListener{
@@ -48,7 +46,10 @@ public class VideoDownloader extends Activity implements OnClickListener{
 		downloadlink = i.getStringExtra("downloadlink");
 
         file_name = file_name.replaceAll("(\\p{Punct})","");
-
+        if(file_name.length()>20){file_name = file_name.substring(0,10);}
+        if(!file_name.endsWith(".mp4")){
+            file_name = file_name+".mp4".replace("mp4.mp4",".mp4");
+        }
 		final EditText filename = (EditText) findViewById(R.id.filename_edittext);
 		final EditText filepath= (EditText) findViewById(R.id.fileway_edittext);
 		ImageView selectfilepath = (ImageView) findViewById(R.id.file_path_imageview);

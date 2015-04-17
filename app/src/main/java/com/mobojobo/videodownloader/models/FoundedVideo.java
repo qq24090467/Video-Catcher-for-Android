@@ -1,4 +1,4 @@
-package com.mobojobo.vivideodownloader.models;
+package com.mobojobo.videodownloader.models;
 
 /**
  * Created by pc on 23.03.2015.

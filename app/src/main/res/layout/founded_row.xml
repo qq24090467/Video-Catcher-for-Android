@@ -19,7 +19,7 @@
             android:layout_toLeftOf="@+id/button"
             android:layout_toStartOf="@+id/button" />
 
-    <IconTextView
+    <android.widget.IconTextView
         android:layout_width="35.0dip"
         android:layout_height="35.0dip"
         android:text="{fa-cloud-download}"

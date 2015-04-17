@@ -1,23 +1,17 @@
-package com.mobojobo.vivideodownloader;
+package com.mobojobo.videodownloader;
 
-import android.app.AlertDialog;
-import android.app.IntentService;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
-import org.apache.commons.io.FilenameUtils;
-import com.commonsware.cwac.wakeful.WakefulIntentService;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.mobojobo.vivideodownloader.MyApp;
-import com.mobojobo.vivideodownloader.models.FoundedVideo;
 
-import org.apache.http.Header;
+import org.apache.commons.io.FilenameUtils;
+
+import com.mobojobo.videodownloader.models.FoundedVideo;
+import com.mobojobo.videodownloader.models.WebData;
+import com.squareup.otto.Subscribe;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,23 +20,24 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 
 /**
  * Created by pc on 23.03.2015.
  */
-public class FrameDetectorService extends WakefulIntentService {
+public class FrameDetectorService {
     String LOG = "FrameDetector";
-    public FrameDetectorService() {
-        super("FrameDetector");
+    Context context;
+    int fin=0;
 
+
+
+    public FrameDetectorService(Context context) {
+        this.context = context;
     }
+
+
+
 
     public void postFoundedVideo(FoundedVideo video){
       /*  Handler handler = new Handler(Looper.getMainLooper());
@@ -104,45 +99,64 @@ public class FrameDetectorService extends WakefulIntentService {
         return videos;
     }
 
-    @Override
-    protected void doWakefulWork(Intent intent) {
-        Log.i(LOG,"starting..");
-        String url = intent.getStringExtra("url");
-        String html = intent.getStringExtra("html");
-        Document doc = Jsoup.parse(html,"UTF-8");
+    public void searchAllFramesJwPlayerVideos(String html){
+
+        Document doc = new Document(html);
+        Elements  elements = doc.getElementsByTag("frame");
+        
+    }
+
+    @Subscribe
+    public void startDetector(WebData webData) {
+        Log.i(LOG, "starting..");
+        String url = webData.getUrl();
+        String html = webData.getHtml();
 
 
-        ArrayList<FoundedVideo> videos = html5VideoFounder(html,url);
-        Log.i(LOG,"Found html5 "+videos.size());
-        for(final FoundedVideo video:videos){
-              Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                MyApp.bus.post(video);
-                Log.i("postedvideo",video.getLink());
 
-            }
-        });
+        Document doc = Jsoup.parse(html, "UTF-8");
+
+
+        //JwPlayer Founder
+        //jwPlayerVideoSourceFounder(url,html);//this page
+        //searchAllFramesJwPlayerVideos(html);
+
+
+        //Basic html5 founder
+        ArrayList<FoundedVideo> videos = html5VideoFounder(html, url);
+        Log.i(LOG, "Found html5 " + videos.size());
+        for (final FoundedVideo video : videos) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    MyApp.bus.post(video);
+                    Log.i("postedvideo", video.getLink());
+
+                }
+            });
         }
+
+
         ArrayList<String> knownFrames = getKnownFrames(html);
 
-        for(String s :knownFrames){
+        for (String s : knownFrames) {
 
-            if(s.startsWith("//http")){
-               s = s.replace("//http","http");
+            if (s.startsWith("//http")) {
+                s = s.replace("//http", "http");
             }
 
-            if(s.startsWith("//")){
-               if(!s.contains("http")){
-                 s =  s.replaceFirst("//","http://");
-               }else{
-                  s= s.replaceFirst("//","");
-               }
+            if (s.startsWith("//")) {
+                if (!s.contains("http")) {
+                    s = s.replaceFirst("//", "http://");
+                } else {
+                    s = s.replaceFirst("//", "");
+                }
             }
 
-            new AsyncTask<String,String,String>(){
+            new AsyncTask<String, String, String>() {
                 String url;
+
                 @Override
                 protected String doInBackground(String... params) {
                     url = params[0];
@@ -150,7 +164,7 @@ public class FrameDetectorService extends WakefulIntentService {
                         String html = Jsoup.connect(params[0]).userAgent("Mozilla/5.0 (Linux; Android 4.4.2; Nexus 5 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.99 Mobile Safari/537.36").get().toString();
                         return html;
                     } catch (Exception e) {
-                       // e.printStackTrace();
+                        // e.printStackTrace();
                         return "null";
                     }
 
@@ -160,26 +174,12 @@ public class FrameDetectorService extends WakefulIntentService {
                 protected void onPostExecute(String html) {
                     super.onPostExecute(html);
 
-                    if(!url.equals("null")){
+                    if (!url.equals("null")) {
                         postVideos(url, html);
                     }
 
                 }
             }.execute(s);
-           /* AsyncHttpClient client = new AsyncHttpClient();
-            client.setUserAgent("Mozilla/5.0 (Linux; Android 4.4.2; Nexus 5 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.99 Mobile Safari/537.36");
-            client.get(s, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    String content = new String(responseBody);
-
-                }
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
-                }
-            });
-            */
         }
     }
 
@@ -511,17 +511,6 @@ public class FrameDetectorService extends WakefulIntentService {
         String source = rudocs.attr("src");
 
         return source;
-    }
-
-    private static String youtubeframedetector(String html) {
-        Document doc;
-        String link = "";
-        doc = Jsoup.parse(html);
-        Elements rudocs = doc.getElementsByAttributeValueContaining("src",
-                "youtube");
-        link = rudocs.attr("src");
-
-        return link;
     }
 
 }

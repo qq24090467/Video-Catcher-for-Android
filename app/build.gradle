@@ -1,19 +1,29 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.mobojobo.vivideodownloader"
+        applicationId "com.mobojobo.videodownloader"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -23,6 +33,7 @@ repositories {
     maven {
         url "https://repo.commonsware.com.s3.amazonaws.com"
     }
+    maven { url 'https://maven.fabric.io/public' }
 }
 dependencies {
 
@@ -34,5 +45,9 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.5'
     compile 'com.commonsware.cwac:wakeful:1.0.+'
     compile 'commons-io:commons-io:2.4'
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
+        transitive = true;
+    }
+
 
 }

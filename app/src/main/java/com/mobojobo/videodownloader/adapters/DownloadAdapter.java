@@ -1,17 +1,15 @@
-package com.mobojobo.vivideodownloader.adapters;
+package com.mobojobo.videodownloader.adapters;
 
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mobojobo.vivideodownloader.R;
-import com.mobojobo.vivideodownloader.models.FoundedVideo;
+import com.mobojobo.videodownloader.R;
+import com.mobojobo.videodownloader.models.FoundedVideo;
 
 import java.util.ArrayList;
 
@@ -32,7 +30,9 @@ public class DownloadAdapter extends BaseAdapter {
     }
 
     public void addItem(FoundedVideo video){
+
         videos.add(video);
+
         notifyDataSetChanged();
         Log.i("DownloadAdapter",videos.size()+"");
     }

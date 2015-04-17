@@ -32,3 +32,6 @@ public *;
 -keep class com.joanzapata.** { *; }
 
 -keep class android.view.** { *; }
+
+-keepattributes InnerClasses, EnclosingMethod
+-keep class com.ironsource.mobilcore.**{ *; }

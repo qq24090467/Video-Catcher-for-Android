@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mobojobo.vivideodownloader" >
+    package="com.mobojobo.videodownloader" >
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:hardwareAccelerated="true"
-        android:name=".MyApp"
+        android:name="com.mobojobo.videodownloader.MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
-            android:name=".MainActivity"
+            android:name="com.mobojobo.videodownloader.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,20 +22,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".FrameDetectorService"></service>
 
-        <activity android:name=".VideoDownloader"
+        <activity android:name="com.mobojobo.videodownloader.VideoDownloader"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar">
 
         </activity>
 
-        <receiver android:name=".DownloadReceiver">
+        <receiver android:name="com.mobojobo.videodownloader.DownloadReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE"></action>
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
             </intent-filter>
         </receiver>
 
+        <service
+            android:name="com.ironsource.mobilcore.MobileCoreReport"
+            android:enabled="true"
+            android:exported="false" android:process=":mcServiceProcess">
+        </service>
+
+        <receiver
+            android:name="com.ironsource.mobilcore.InstallationTracker"
+            android:enabled="true"
+            android:process=":installationTracker">
+        </receiver>
+
+        <activity
+            android:name="com.ironsource.mobilcore.InterstitialVideoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:keepScreenOn="true"/>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="cc6fffc0117e149fcd265d26bebb6a13b5b3f710" />
     </application>
 
 </manifest>

@@ -1,6 +1,5 @@
-package com.mobojobo.vivideodownloader;
+package com.mobojobo.videodownloader;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,9 +7,9 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,31 +19,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.IconTextView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.commonsware.cwac.wakeful.WakefulIntentService;
+import com.ironsource.mobilcore.CallbackResponse;
+import com.ironsource.mobilcore.MobileCore;
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
-import com.mobojobo.vivideodownloader.adapters.DownloadAdapter;
-import com.mobojobo.vivideodownloader.models.FoundedVideo;
+import com.mobojobo.videodownloader.adapters.DownloadAdapter;
+import com.mobojobo.videodownloader.models.FoundedVideo;
+import com.mobojobo.videodownloader.models.WebData;
 import com.squareup.otto.Subscribe;
 
-import java.lang.reflect.Field;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -57,10 +60,30 @@ public class MainActivity extends ActionBarActivity {
     static DownloadAdapter adapter;
     private boolean doubleBackToExitPressedOnce=false;
     static SharedPreferences sharedPreferences;
+    static FrameDetectorService detectorService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+       /* MobileCore.init(this, "2LSDP6OFPV9Z0E1MZ32X8D6YHAXU5", MobileCore.LOG_TYPE.DEBUG, MobileCore.AD_UNITS.INTERSTITIAL);
+        Timer a = new Timer();
+        a.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                MobileCore.showInterstitial(MainActivity.this, new CallbackResponse() {
+
+                    @Override
+                    public void onConfirmation(TYPE arg0) {
+
+                    }
+
+                });
+            }
+        }, 10000 );
+
+*/
         MyApp.bus.register(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -129,19 +152,17 @@ public class MainActivity extends ActionBarActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
                 String url = url_edittext.getText().toString();
-                if (isLink(url)) {
-
-                    if (!url.startsWith("http://") || !url.startsWith("https://")) {
-
-                        url = "http://" + url;
-
-                    }
-
-                } else {
-                    // Get the text from EditText here
+                try {
+                    URL link = new URL(url);
+                    url = link.toString();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
                     url = "https://www.google.com/search?q=" + url;
 
+
                 }
+
+
 
                 webview.loadUrl(url);
 
@@ -168,6 +189,12 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
+
+
+
+
+        detectorService= new FrameDetectorService(this);
+
 
 
     }
@@ -238,7 +265,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     @Subscribe
-    public void onFoundNewVideo(FoundedVideo video){
+    public static void onFoundNewVideo(FoundedVideo video){
         String t = count_text.getText().toString();
         int i = Integer.parseInt(t);
         i=i+1;
@@ -267,11 +294,23 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_report) {
+            report(webview.getUrl());
             return true;
         }
 
+
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void report(String url){
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"smhyldz51@gmail.com"});
+        email.putExtra(Intent.EXTRA_SUBJECT, "ViDown App");
+        email.putExtra(Intent.EXTRA_TEXT, "ViDown app don't catch videos on this url => "+url);
+        email.setType("message/rfc822");
+        startActivity(Intent.createChooser(email, "Choose an Email client :"));
     }
 
     /**
@@ -279,6 +318,7 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        String now_url;
         public PlaceholderFragment() {
         }
 
@@ -315,19 +355,43 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void onLoadResource(WebView view, String url) {
                     super.onLoadResource(view, url);
-                    Log.i("resource",url);
                 }
 
 
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
+                    now_url = url;
                     webview.loadUrl("javascript:window.HtmlViewer.showHTML" +
-                                "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
-                    Log.i("finish",url);
-                    sharedPreferences.edit().putString("last",url).commit();
+                            "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
+
+                    sharedPreferences.edit().putString("last", url).commit();
+                    Handler handler = new Handler(Looper.getMainLooper());
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("var oytsa = jwplayer().getPlaylist();");
+                            sb.append("var assfg = JSON.stringify(oytsa);");
+                            sb.append("HtmlViewer.getSources(assfg,document.title);");
+                            webview.loadUrl("javascript:" + sb.toString());
+
+                            StringBuilder sbframe = new StringBuilder();
+                            sbframe.append("for( i=0;i<frames.length;i++) {");
+                            sbframe.append("try {");
+                            sbframe.append("   var playlist = frames[i].window.jwplayer().getPlaylist();");
+                            sbframe.append("   var ytruza = JSON.stringify(playlist);");
+                            sbframe.append("HtmlViewer.getSources(ytruza,document.title);");
+                            sbframe.append("}catch(err){}}");
+                            webview.loadUrl("javascript:" + sbframe.toString());
+                        }
+
+                    }, 100  );
 
                 }
+
             });
 
             webview.setWebChromeClient(new WebChromeClient());
@@ -348,6 +412,41 @@ public class MainActivity extends ActionBarActivity {
             MyJavaScriptInterface(Context ctx) {
                 this.ctx = ctx;
             }
+
+            @JavascriptInterface
+            public void getSources(String html,String title)
+            {
+                //Toast.makeText(context,html,Toast.LENGTH_SHORT).show();
+                Log.i("javascript",html);
+                try {
+                    JSONArray jsonArray = new JSONArray(html);
+                    for(int i =0;i<jsonArray.length();i++){
+                        JSONObject obj =jsonArray.getJSONObject(i);
+                        String file = jsonArray.getJSONObject(i).getString("file");
+                        String name;
+                        try{
+
+                            name = title.substring(0,10)+" "+obj.getString("label")+".mp4";
+                        }catch (Exception e){
+                            try{
+                                name = title.substring(0,10)+".mp4";
+                            }catch (Exception e2){
+                                name = title+".mp4";
+                            }
+                        }
+                            final FoundedVideo foundedVideo = new FoundedVideo(file,name);
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                onFoundNewVideo(foundedVideo);
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             @JavascriptInterface
             public void showHTML(final String html) {
                 //new AlertDialog.Builder(ctx).setTitle("HTML").setMessage(html)
@@ -358,8 +457,17 @@ public class MainActivity extends ActionBarActivity {
                         Intent i = new Intent(getActivity(),FrameDetectorService.class);
                         i.putExtra("html",html);
 //                        i.putExtra("url",webview.getUrl());
-                        WakefulIntentService.sendWakefulWork(getActivity(), i);
-                    }
+                         //MyApp.bus.post(webData);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                WebData webData= new WebData();
+                                webData.setHtml(html);
+                                webData.setUrl(now_url);
+                                detectorService.startDetector(webData);
+
+                            }
+                        });}
                 }.run();
 
                // Log.i("html",html);
