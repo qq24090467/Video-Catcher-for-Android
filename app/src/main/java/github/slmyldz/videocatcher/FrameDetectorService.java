@@ -1,4 +1,4 @@
-package com.mobojobo.videodownloader;
+package github.slmyldz.videocatcher;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -8,8 +8,8 @@ import android.util.Log;
 
 import org.apache.commons.io.FilenameUtils;
 
-import com.mobojobo.videodownloader.models.FoundedVideo;
-import com.mobojobo.videodownloader.models.WebData;
+import github.slmyldz.videocatcher.models.WebData;
+import github.slmyldz.videocatcher.models.FoundedVideo;
 import com.squareup.otto.Subscribe;
 
 import org.json.JSONArray;
@@ -22,9 +22,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
-/**
- * Created by pc on 23.03.2015.
- */
 public class FrameDetectorService {
     String LOG = "FrameDetector";
     Context context;

@@ -1,8 +1,5 @@
-package com.mobojobo.videodownloader.models;
+package github.slmyldz.videocatcher.models;
 
-/**
- * Created by pc on 12.04.2015.
- */
 public class WebData {
     public String getTitle() {
         return title;

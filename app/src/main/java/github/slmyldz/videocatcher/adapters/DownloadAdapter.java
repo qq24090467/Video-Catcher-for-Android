@@ -1,4 +1,4 @@
-package com.mobojobo.videodownloader.adapters;
+package github.slmyldz.videocatcher.adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,14 +8,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.mobojobo.videodownloader.R;
-import com.mobojobo.videodownloader.models.FoundedVideo;
+import github.slmyldz.videocatcher.models.FoundedVideo;
+import github.slmyldz.videocatcher.R;
 
 import java.util.ArrayList;
 
-/**
- * Created by pc on 23.03.2015.
- */
+
 public class DownloadAdapter extends BaseAdapter {
 
     Context context;

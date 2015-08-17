@@ -1,4 +1,4 @@
-package com.mobojobo.videodownloader;
+package github.slmyldz.videocatcher;
 
 import java.io.File;
 
@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.mobojobo.videodownloader.utils.FileDialog;
+import github.slmyldz.videocatcher.utils.FileDialog;
 
 
 public class VideoDownloader extends Activity implements OnClickListener{
@@ -33,7 +33,7 @@ public class VideoDownloader extends Activity implements OnClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.downloadialog);
+		setContentView(github.slmyldz.videocatcher.R.layout.downloadialog);
 
         downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
 
@@ -50,11 +50,11 @@ public class VideoDownloader extends Activity implements OnClickListener{
         if(!file_name.endsWith(".mp4")){
             file_name = file_name+".mp4".replace("mp4.mp4",".mp4");
         }
-		final EditText filename = (EditText) findViewById(R.id.filename_edittext);
-		final EditText filepath= (EditText) findViewById(R.id.fileway_edittext);
-		ImageView selectfilepath = (ImageView) findViewById(R.id.file_path_imageview);
-		Button download = (Button) findViewById(R.id.confrim);
-		Button cancel = (Button) findViewById(R.id.cancel);
+		final EditText filename = (EditText) findViewById(github.slmyldz.videocatcher.R.id.filename_edittext);
+		final EditText filepath= (EditText) findViewById(github.slmyldz.videocatcher.R.id.fileway_edittext);
+		ImageView selectfilepath = (ImageView) findViewById(github.slmyldz.videocatcher.R.id.file_path_imageview);
+		Button download = (Button) findViewById(github.slmyldz.videocatcher.R.id.confrim);
+		Button cancel = (Button) findViewById(github.slmyldz.videocatcher.R.id.cancel);
 		
 		
 		filename.setText(file_name);

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mobojobo.videodownloader" >
+    package="github.slmyldz.videocatcher" >
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:hardwareAccelerated="true"
-        android:name="com.mobojobo.videodownloader.MyApp"
+        android:name="github.slmyldz.videocatcher.MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name="com.mobojobo.videodownloader.MainActivity"
+            android:name="github.slmyldz.videocatcher.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,12 +23,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.mobojobo.videodownloader.VideoDownloader"
+        <activity android:name="github.slmyldz.videocatcher.VideoDownloader"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar">
 
         </activity>
 
-        <receiver android:name="com.mobojobo.videodownloader.DownloadReceiver">
+        <receiver android:name="github.slmyldz.videocatcher.DownloadReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE"></action>
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />

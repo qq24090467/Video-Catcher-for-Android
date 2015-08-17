@@ -1,4 +1,4 @@
-package com.mobojobo.videodownloader.utils;
+package github.slmyldz.videocatcher.utils;
 
 import java.io.File;
 import java.io.FilenameFilter;

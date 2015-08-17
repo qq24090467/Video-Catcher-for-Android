@@ -1,4 +1,4 @@
-package com.mobojobo.videodownloader;
+package github.slmyldz.videocatcher;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,13 +31,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ironsource.mobilcore.CallbackResponse;
-import com.ironsource.mobilcore.MobileCore;
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
-import com.mobojobo.videodownloader.adapters.DownloadAdapter;
-import com.mobojobo.videodownloader.models.FoundedVideo;
-import com.mobojobo.videodownloader.models.WebData;
+import github.slmyldz.videocatcher.models.WebData;
+import github.slmyldz.videocatcher.adapters.DownloadAdapter;
+import github.slmyldz.videocatcher.models.FoundedVideo;
 import com.squareup.otto.Subscribe;
 
 import org.json.JSONArray;
@@ -46,8 +44,6 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -61,44 +57,26 @@ public class MainActivity extends ActionBarActivity {
     private boolean doubleBackToExitPressedOnce=false;
     static SharedPreferences sharedPreferences;
     static FrameDetectorService detectorService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-       /* MobileCore.init(this, "2LSDP6OFPV9Z0E1MZ32X8D6YHAXU5", MobileCore.LOG_TYPE.DEBUG, MobileCore.AD_UNITS.INTERSTITIAL);
-        Timer a = new Timer();
-        a.schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-                MobileCore.showInterstitial(MainActivity.this, new CallbackResponse() {
-
-                    @Override
-                    public void onConfirmation(TYPE arg0) {
-
-                    }
-
-                });
-            }
-        }, 10000 );
-
-*/
         MyApp.bus.register(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setCustomView(R.layout.url_toolbar);
+        getSupportActionBar().setCustomView(github.slmyldz.videocatcher.R.layout.url_toolbar);
         View urltab_view = getSupportActionBar().getCustomView();
-        url_edittext = (EditText) urltab_view.findViewById(R.id.filename_edittext);
-        home = (IconTextView) urltab_view.findViewById(R.id.home_button);
-        refresh = (IconTextView) urltab_view.findViewById(R.id. reload_button);
+        url_edittext = (EditText) urltab_view.findViewById(github.slmyldz.videocatcher.R.id.filename_edittext);
+        home = (IconTextView) urltab_view.findViewById(github.slmyldz.videocatcher.R.id.home_button);
+        refresh = (IconTextView) urltab_view.findViewById(github.slmyldz.videocatcher.R.id. reload_button);
 
-        count_text = (TextView)  urltab_view.findViewById(R.id.video_count);
-        next_back_layout= (LinearLayout) urltab_view.findViewById(R.id.next_back_layout);
+        count_text = (TextView)  urltab_view.findViewById(github.slmyldz.videocatcher.R.id.video_count);
+        next_back_layout= (LinearLayout) urltab_view.findViewById(github.slmyldz.videocatcher.R.id.next_back_layout);
         Drawable background =  new IconDrawable(this, Iconify.IconValue.fa_download)
-                .colorRes(R.color.text_color)
+                .colorRes(github.slmyldz.videocatcher.R.color.text_color)
                 .actionBarSize();
         next_back_layout.setBackground(background);
 
@@ -119,9 +97,9 @@ public class MainActivity extends ActionBarActivity {
         count_text.setText("0");
 
 
-        setContentView(R.layout.activity_main);
+        setContentView(github.slmyldz.videocatcher.R.layout.activity_main);
 
-        videoslistView = (ListView) findViewById(R.id.videoslist);
+        videoslistView = (ListView) findViewById(github.slmyldz.videocatcher.R.id.videoslist);
         videoslistView.setVisibility(View.INVISIBLE);
         adapter = new DownloadAdapter(this);
         videoslistView.setAdapter(adapter);
@@ -139,7 +117,7 @@ public class MainActivity extends ActionBarActivity {
         });
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(github.slmyldz.videocatcher.R.id.container, new PlaceholderFragment())
                     .commit();
         }
 
@@ -281,7 +259,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(github.slmyldz.videocatcher.R.menu.menu_main, menu);
         return true;
     }
 
@@ -294,7 +272,7 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_report) {
+        if (id == github.slmyldz.videocatcher.R.id.action_report) {
             report(webview.getUrl());
             return true;
         }
@@ -327,8 +305,8 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            webview = (WebView) rootView.findViewById(R.id.webView1);
+            View rootView = inflater.inflate(github.slmyldz.videocatcher.R.layout.fragment_main, container, false);
+            webview = (WebView) rootView.findViewById(github.slmyldz.videocatcher.R.id.webView1);
             String lastlink;
             if(!sharedPreferences.contains("last")){
                 lastlink="http://www.google.com";

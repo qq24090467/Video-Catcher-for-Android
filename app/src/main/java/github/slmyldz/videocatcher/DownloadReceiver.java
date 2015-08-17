@@ -1,4 +1,4 @@
-package com.mobojobo.videodownloader;
+package github.slmyldz.videocatcher;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;

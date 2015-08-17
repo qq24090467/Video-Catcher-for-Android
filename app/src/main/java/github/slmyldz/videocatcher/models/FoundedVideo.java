@@ -1,8 +1,5 @@
-package com.mobojobo.videodownloader.models;
+package github.slmyldz.videocatcher.models;
 
-/**
- * Created by pc on 23.03.2015.
- */
 public class FoundedVideo {
     public String getLink() {
         return link;
