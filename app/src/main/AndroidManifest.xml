@@ -34,27 +34,6 @@
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
             </intent-filter>
         </receiver>
-
-        <service
-            android:name="com.ironsource.mobilcore.MobileCoreReport"
-            android:enabled="true"
-            android:exported="false" android:process=":mcServiceProcess">
-        </service>
-
-        <receiver
-            android:name="com.ironsource.mobilcore.InstallationTracker"
-            android:enabled="true"
-            android:process=":installationTracker">
-        </receiver>
-
-        <activity
-            android:name="com.ironsource.mobilcore.InterstitialVideoActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:keepScreenOn="true"/>
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="cc6fffc0117e149fcd265d26bebb6a13b5b3f710" />
     </application>
 
 </manifest>
